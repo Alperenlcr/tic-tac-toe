@@ -1,0 +1,87 @@
+<!-- FILEPATH: /C:/Users/alper/Desktop/TicTackToe/templates/game_list.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            color: #333333;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #0066cc;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select {
+            width: 200px;
+            padding: 5px;
+            border: 1px solid #cccccc;
+            border-radius: 3px;
+        }
+
+        input[type="submit"] {
+            padding: 8px 15px;
+            background-color: #0066cc;
+            color: #ffffff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0052a3;
+        }
+    </style>
+</head>
+<body>
+    {% if name %}
+    <p>Welcome {{ name }}!</p>
+    {% endif %}
+    <h1>Game List</h1>
+    <ul>
+        {% for game in games %}
+        <li>
+            <a href="/game?game_name={{ game[0] }}&color={{ game[1] }}">{{ game[0] }}</a> - Color: {{ game[1] }}
+        </li>
+        {% endfor %}
+    </ul>
+    <form action="/game_list" method="get">
+        <label for="game_name">Game Name:</label><br>
+        <input type="text" id="name" name="game_name"><br>
+        <label for="color">Color:</label><br>
+        <select id="color" name="color">
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+            <option value="black">Black</option>
+            <option value="white">Gray</option>
+        </select><br>
+        <input type="submit" value="Add">
+    </form>
+</body>
+</html>
