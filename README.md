@@ -24,4 +24,4 @@ $ python app.py
 ```
 
 ## Game Play
-[Game Video](runtime.mp4)
+https://github.com/Alperenlcr/tic-tac-toe/assets/75525649/42095516-849b-4d8f-9cd9-2cbff151f7e5
