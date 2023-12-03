@@ -19,7 +19,7 @@
         .cell {
             width: 100px;
             height: 100px;
-            border: 1px solid #ccc;
+            border: 1px solid #ffffff;
             font-size: 2em;
             cursor: pointer;
             display: flex;
@@ -30,7 +30,9 @@
 </head>
 
 <body bgcolor="{{color}}">
-
+    <h1> | </h1>
+    <h1> | </h1>
+    <h1> V</h1>
     <div id="gameBoard">
         <!-- The game board will be dynamically generated here -->
     </div>
@@ -43,43 +45,130 @@
             ['', '', '']
         ];
 
+        // Create the game board
         function createGameBoard() {
+            // Create the game board UI
             var gameBoardElement = document.getElementById('gameBoard');
+            // Create the cells
             for (var i = 0; i < 3; i++) {
                 for (var j = 0; j < 3; j++) {
+                    // Create a cell
                     var cell = document.createElement('div');
                     cell.className = 'cell';
                     cell.dataset.row = i;
                     cell.dataset.col = j;
                     cell.addEventListener('click', cellClick);
+                    // Add the cell to the game board
                     gameBoardElement.appendChild(cell);
                 }
             }
         }
 
+        // Handle a cell click event
         function cellClick(event) {
+            // Get the row and column of the clicked cell
             var row = event.target.dataset.row;
             var col = event.target.dataset.col;
-
+            currentPlayer = 'X';
+            // Make sure the cell is empty
             if (board[row][col] === '') {
+                // Fill the cell with the current player
                 board[row][col] = currentPlayer;
+                // Update the board view
                 event.target.textContent = currentPlayer;
-
+                // Check for a win or draw
                 if (checkWin()) {
-                    alert(currentPlayer + ' wins!');
-                    window.location.href = '/game_list'; // Redirect to game_list page
-                    
+                    alert('Player X wins!');
+                    window.location.href = '/game_list?game_name=' + '€removeTheGame£' + '{{ game_name }}' + '&color=' + '{{ color }}'; // Redirect to game_list page
                 } else if (checkDraw()) {
                     alert('It\'s a draw!');
                     resetGame();
-                } else {
-                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
                 }
+
+                // Computer plays
+                currentPlayer = 'O';
+
+                // Check if the computer can win in one move
+                var moved=-1;
+                for (var i = 0; i < 3; i++) {
+                    for (var j = 0; j < 3; j++) {
+                        if (board[i][j] === '') {
+                            board[i][j] = currentPlayer;
+                            if (checkWin()) {
+                                moved = 1;
+                                break;
+                            }
+                            board[i][j] = ''; // Reset the move
+                        }
+                    }
+                    if (moved === 1) {
+                        break;
+                    }
+                }
+
+                // If the computer can win in one move, make that move
+                if (moved === 1) {
+                    updateBoardView();
+                    setTimeout(function () {
+                        alert("Computer 'O' wins!");
+                        window.location.href = '/game_list?game_name=' + '€removeTheGame£' + '{{ game_name }}' + '&color=' + '{{ color }}'; // Redirect to game_list page
+                    }, 100); // Delay the alert by 100 milliseconds
+                    return;
+                } 
+                
+                // If not, check if there's a move to block the player
+                currentPlayer = 'X';
+                for (var i = 0; i < 3; i++) {
+                    for (var j = 0; j < 3; j++) {
+                        if (board[i][j] === '') {
+                            board[i][j] = currentPlayer;
+                            if (checkWin()) {
+                                moved = 1;
+                                currentPlayer = 'O';
+                                board[i][j] = currentPlayer;
+                                break;
+                            }
+                            board[i][j] = ''; // Reset the move
+                        }
+                    }
+                    if (moved === 1) {
+                        break;
+                    }
+                }
+                currentPlayer = 'O';
+
+                // If there's a move to block the player, make that move
+                if (moved === 1) {
+                    updateBoardView();
+                    setTimeout(function () {
+                        if (checkDraw()) {
+                            alert('It\'s a draw!');
+                            resetGame();
+                        }
+                    }, 100); // Delay the alert by 100 milliseconds
+                    return;
+                }
+                // If no winning move or blocking move, make a random move
+                while (true) {
+                    var randomRow = Math.floor(Math.random() * 3);
+                    var randomCol = Math.floor(Math.random() * 3);
+                    if (board[randomRow][randomCol] === '') {
+                        board[randomRow][randomCol] = currentPlayer;
+                        updateBoardView();
+                        break;
+                    }
+                }
+                setTimeout(function () {
+                    if (checkDraw()) {
+                        alert('It\'s a draw!');
+                        resetGame();
+                    }
+                }, 100); // Delay the alert by 100 milliseconds
             }
         }
 
+        // Check rows, columns, and diagonals for a win
         function checkWin() {
-            // Check rows, columns, and diagonals for a win
             for (var i = 0; i < 3; i++) {
                 if (board[i][0] === currentPlayer && board[i][1] === currentPlayer && board[i][2] === currentPlayer) {
                     return true; // Row win
@@ -97,8 +186,8 @@
             return false;
         }
 
+        // Check if all cells are filled (draw)
         function checkDraw() {
-            // Check if all cells are filled (draw)
             for (var i = 0; i < 3; i++) {
                 for (var j = 0; j < 3; j++) {
                     if (board[i][j] === '') {
@@ -109,8 +198,8 @@
             return true; // All cells are filled, it's a draw
         }
 
+        // Clear the board and reset variables
         function resetGame() {
-            // Clear the board and reset variables
             board = [
                 ['', '', ''],
                 ['', '', ''],
@@ -120,12 +209,13 @@
             updateBoardView();
         }
 
+        // Update the view based on the current state of the board
         function updateBoardView() {
-            // Update the view based on the current state of the board
             var cells = document.getElementsByClassName('cell');
             for (var i = 0; i < cells.length; i++) {
                 var row = cells[i].dataset.row;
                 var col = cells[i].dataset.col;
+                // Update the cell's content
                 cells[i].textContent = board[row][col];
             }
         }
@@ -133,7 +223,5 @@
         // Initialize the game board
         createGameBoard();
     </script>
-
 </body>
-
 </html>

@@ -49,8 +49,10 @@
     </form>    
 
     <script>
+        // Validate the name
         function validateName() {
             var nameInput = document.getElementById("name");
+            // Check if the name is empty
             if (nameInput.value.trim() === "") {
                 return false;
             }
